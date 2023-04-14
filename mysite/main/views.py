@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
 
@@ -15,6 +16,20 @@ class HomeView(ListView):
         if self.request.htmx:
             return "main/components/post-list-elements.html"
         return "main/index.html"
+
+
+def post_list(request):
+    p = Paginator(Post.objects.all(), 10)
+    page = request.GET.get("page")
+    pages = p.get_page(page)
+
+    return render(
+        request,
+        "main/index.html",
+        {
+            "pages": pages,
+        },
+    )
 
 
 def post_single(request, post):
